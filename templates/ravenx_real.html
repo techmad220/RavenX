@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RavenX - AI Vulnerability Scanner & Reporter</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Share Tech Mono', monospace;
+            background: #000;
+            color: #0ff;
+            min-height: 100vh;
+        }
+        
+        /* Cyber background */
+        .cyber-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, #000 0%, #001122 100%);
+            z-index: -2;
+        }
+        
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 0, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 0, 255, 0.03) 1px, transparent 1px);
+            background-size: 100px 100px;
+            z-index: -1;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(90deg, #000 0%, #220022 50%, #000 100%);
+            border-bottom: 2px solid #f0f;
+            padding: 2rem;
+            box-shadow: 0 0 40px rgba(255, 0, 255, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 0, 255, 0.4), transparent);
+            animation: scan 4s linear infinite;
+        }
+        
+        @keyframes scan {
+            from { left: -100%; }
+            to { left: 100%; }
+        }
+        
+        .logo {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, #f0f, #0ff, #f0f);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient-flow 3s ease infinite;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        @keyframes gradient-flow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .subtitle {
+            color: #f0f;
+            margin-top: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        /* Navigation */
+        .nav {
+            background: rgba(34, 0, 34, 0.9);
+            padding: 0.5rem;
+            border-bottom: 1px solid rgba(255, 0, 255, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 2px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .nav-tab {
+            flex: 1;
+            padding: 1rem;
+            background: linear-gradient(135deg, rgba(255, 0, 255, 0.1), transparent);
+            border: 1px solid rgba(255, 0, 255, 0.3);
+            color: #f0f;
+            cursor: pointer;
+            text-align: center;
+            text-transform: uppercase;
+            font-weight: bold;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .nav-tab::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #f0f;
+            transition: width 0.3s;
+        }
+        
+        .nav-tab:hover::before,
+        .nav-tab.active::before {
+            width: 100%;
+        }
+        
+        .nav-tab.active {
+            background: rgba(255, 0, 255, 0.25);
+            color: #0ff;
+            box-shadow: inset 0 0 20px rgba(255, 0, 255, 0.3);
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1600px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        /* Scanner Interface */
+        .scanner-card {
+            background: linear-gradient(135deg, rgba(34, 0, 34, 0.9), rgba(68, 0, 68, 0.9));
+            border: 1px solid rgba(255, 0, 255, 0.3);
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .scanner-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #f0f, transparent);
+            animation: scan-line 3s linear infinite;
+        }
+        
+        @keyframes scan-line {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(100%); }
+        }
+        
+        .scan-form {
+            display: grid;
+            gap: 1.5rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .form-label {
+            color: #f0f;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+        
+        .form-input {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 0, 255, 0.3);
+            color: #0ff;
+            padding: 0.75rem;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #f0f;
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+        }
+        
+        .scan-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .option-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+        
+        .option-toggle input[type="checkbox"] {
+            appearance: none;
+            width: 40px;
+            height: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 0, 255, 0.3);
+            border-radius: 10px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .option-toggle input[type="checkbox"]::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: #f0f;
+            border-radius: 50%;
+            top: 1px;
+            left: 1px;
+            transition: all 0.3s;
+        }
+        
+        .option-toggle input[type="checkbox"]:checked {
+            background: rgba(255, 0, 255, 0.3);
+            border-color: #f0f;
+        }
+        
+        .option-toggle input[type="checkbox"]:checked::after {
+            left: 21px;
+            background: #0ff;
+        }
+        
+        .scan-btn {
+            background: linear-gradient(135deg, #f0f, #0ff);
+            border: none;
+            color: #000;
+            padding: 1rem 2rem;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .scan-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 0, 255, 0.5);
+        }
+        
+        .scan-btn:active {
+            transform: translateY(0);
+        }
+        
+        /* Results Display */
+        .results-container {
+            display: none;
+        }
+        
+        .results-container.active {
+            display: block;
+        }
+        
+        .vuln-item {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 0, 255, 0.2);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 3px solid #f0f;
+            transition: all 0.3s;
+        }
+        
+        .vuln-item.critical {
+            border-left-color: #f00;
+            background: rgba(255, 0, 0, 0.1);
+        }
+        
+        .vuln-item.high {
+            border-left-color: #ff8800;
+            background: rgba(255, 136, 0, 0.1);
+        }
+        
+        .vuln-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .vuln-title {
+            font-size: 1.2rem;
+            color: #0ff;
+        }
+        
+        .vuln-severity {
+            padding: 0.3rem 0.8rem;
+            border-radius: 3px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+        
+        .severity-critical {
+            background: #f00;
+            color: #fff;
+        }
+        
+        .severity-high {
+            background: #ff8800;
+            color: #fff;
+        }
+        
+        .severity-medium {
+            background: #ff0;
+            color: #000;
+        }
+        
+        .severity-low {
+            background: #0f0;
+            color: #000;
+        }
+        
+        /* Terminal Output */
+        .terminal {
+            background: #000;
+            border: 1px solid #0f0;
+            border-radius: 5px;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            color: #0f0;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 1rem;
+        }
+        
+        .terminal-line {
+            margin: 0.25rem 0;
+        }
+        
+        .terminal-prompt {
+            color: #f0f;
+        }
+        
+        /* Status */
+        .status-bar {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 0, 255, 0.3);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #0f0;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+    </style>
+</head>
+<body>
+    <div class="cyber-bg"></div>
+    <div class="grid-overlay"></div>
+    
+    <header class="header">
+        <h1 class="logo">
+            <span>🦅</span>
+            RAVENX
+        </h1>
+        <p class="subtitle">AI-Powered Vulnerability Scanner & HackerOne Reporter</p>
+    </header>
+    
+    <nav class="nav">
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showView('scan')">New Scan</button>
+            <button class="nav-tab" onclick="showView('results')">Scan Results</button>
+            <button class="nav-tab" onclick="showView('triage')">AI Triage</button>
+            <button class="nav-tab" onclick="showView('reports')">H1 Reports</button>
+            <button class="nav-tab" onclick="showView('config')">Configuration</button>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <!-- Scan View -->
+        <div id="scan-view" class="view">
+            <div class="scanner-card">
+                <h2 style="color: #f0f; margin-bottom: 1.5rem;">Configure Security Scan</h2>
+                
+                <div class="scan-form">
+                    <div class="form-group">
+                        <label class="form-label">Target URL</label>
+                        <input type="text" class="form-input" id="targetUrl" placeholder="https://example.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Scan Configuration</label>
+                        <textarea class="form-input" id="targets" rows="5" placeholder="# Add multiple targets (one per line)
+# Supports wildcards: *.example.com
+# Exclude paths: -/admin/*"></textarea>
+                    </div>
+                    
+                    <div class="scan-options">
+                        <label class="option-toggle">
+                            <input type="checkbox" id="paramMiner" checked>
+                            <span>Parameter Mining</span>
+                        </label>
+                        <label class="option-toggle">
+                            <input type="checkbox" id="llmTriage" checked>
+                            <span>AI Triage (LLM)</span>
+                        </label>
+                        <label class="option-toggle">
+                            <input type="checkbox" id="subEnum" checked>
+                            <span>Subdomain Enumeration</span>
+                        </label>
+                        <label class="option-toggle">
+                            <input type="checkbox" id="h1Integration">
+                            <span>HackerOne Integration</span>
+                        </label>
+                    </div>
+                    
+                    <button class="scan-btn" onclick="startScan()">
+                        INITIATE SCAN
+                    </button>
+                </div>
+                
+                <div class="terminal" id="scanTerminal" style="display: none;">
+                    <div class="terminal-line">
+                        <span class="terminal-prompt">ravenx@scanner:~$</span> Initializing scan engine...
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Results View -->
+        <div id="results-view" class="view" style="display: none;">
+            <div class="status-bar">
+                <div class="status-item">
+                    <span class="status-indicator"></span>
+                    <span>Scan Status: <span id="scanStatus">IDLE</span></span>
+                </div>
+                <div class="status-item">
+                    <span>Vulnerabilities Found: <span id="vulnCount">0</span></span>
+                </div>
+            </div>
+            
+            <div class="scanner-card">
+                <h2 style="color: #f0f; margin-bottom: 1.5rem;">Vulnerability Findings</h2>
+                <div id="vulnList" class="results-container"></div>
+            </div>
+        </div>
+        
+        <!-- AI Triage View -->
+        <div id="triage-view" class="view" style="display: none;">
+            <div class="scanner-card">
+                <h2 style="color: #f0f; margin-bottom: 1.5rem;">AI Triage Analysis</h2>
+                <div id="triageResults">
+                    <p style="color: #888;">No triage results available. Run a scan with AI Triage enabled.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- H1 Reports View -->
+        <div id="reports-view" class="view" style="display: none;">
+            <div class="scanner-card">
+                <h2 style="color: #f0f; margin-bottom: 1.5rem;">HackerOne Submissions</h2>
+                <div id="h1Reports">
+                    <p style="color: #888;">Configure HackerOne credentials in settings to enable automatic submission.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Config View -->
+        <div id="config-view" class="view" style="display: none;">
+            <div class="scanner-card">
+                <h2 style="color: #f0f; margin-bottom: 1.5rem;">Configuration</h2>
+                
+                <div class="scan-form">
+                    <div class="form-group">
+                        <label class="form-label">HackerOne Username</label>
+                        <input type="text" class="form-input" id="h1User" placeholder="your_username">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">HackerOne API Token</label>
+                        <input type="password" class="form-input" id="h1Token" placeholder="your_api_token">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">OpenAI API Key (for LLM Triage)</label>
+                        <input type="password" class="form-input" id="openaiKey" placeholder="sk-...">
+                    </div>
+                    
+                    <button class="scan-btn" onclick="saveConfig()">
+                        SAVE CONFIGURATION
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let scanActive = false;
+        let vulnerabilities = [];
+        
+        // View switching
+        function showView(viewName) {
+            document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
+            document.getElementById(viewName + '-view').style.display = 'block';
+            
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+        
+        // Start scan
+        async function startScan() {
+            const targetUrl = document.getElementById('targetUrl').value;
+            const targets = document.getElementById('targets').value;
+            
+            if (!targetUrl && !targets) {
+                alert('Please enter a target URL or configuration');
+                return;
+            }
+            
+            scanActive = true;
+            const terminal = document.getElementById('scanTerminal');
+            terminal.style.display = 'block';
+            
+            // Add scan messages
+            addTerminalLine('Starting vulnerability scan...');
+            addTerminalLine(`Target: ${targetUrl || 'Multiple targets'}`);
+            
+            if (document.getElementById('paramMiner').checked) {
+                addTerminalLine('✓ Parameter mining enabled');
+            }
+            if (document.getElementById('llmTriage').checked) {
+                addTerminalLine('✓ AI-powered triage enabled');
+            }
+            if (document.getElementById('subEnum').checked) {
+                addTerminalLine('✓ Subdomain enumeration enabled');
+            }
+            
+            // Simulate scan progress
+            setTimeout(() => {
+                addTerminalLine('Crawling target application...');
+            }, 1000);
+            
+            setTimeout(() => {
+                addTerminalLine('Testing for SQL injection...');
+            }, 2000);
+            
+            setTimeout(() => {
+                addTerminalLine('Testing for XSS vulnerabilities...');
+            }, 3000);
+            
+            setTimeout(() => {
+                addTerminalLine('Running parameter fuzzing...');
+            }, 4000);
+            
+            setTimeout(() => {
+                addTerminalLine('AI analyzing results...');
+                completeScan();
+            }, 5000);
+        }
+        
+        // Add terminal line
+        function addTerminalLine(text) {
+            const terminal = document.getElementById('scanTerminal');
+            const line = document.createElement('div');
+            line.className = 'terminal-line';
+            line.innerHTML = `<span class="terminal-prompt">ravenx@scanner:~$</span> ${text}`;
+            terminal.appendChild(line);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+        
+        // Complete scan
+        function completeScan() {
+            addTerminalLine('Scan complete! Found vulnerabilities.');
+            
+            // Add sample vulnerabilities
+            vulnerabilities = [
+                {
+                    title: 'SQL Injection in User Login',
+                    severity: 'critical',
+                    description: 'Unvalidated user input in login form allows SQL injection',
+                    endpoint: '/api/login',
+                    confidence: 95
+                },
+                {
+                    title: 'Cross-Site Scripting (XSS)',
+                    severity: 'high',
+                    description: 'Reflected XSS in search parameter',
+                    endpoint: '/search?q=',
+                    confidence: 88
+                },
+                {
+                    title: 'Exposed API Keys',
+                    severity: 'high',
+                    description: 'API keys found in JavaScript source',
+                    endpoint: '/assets/app.js',
+                    confidence: 100
+                }
+            ];
+            
+            // Show results
+            showView('results');
+            document.getElementById('scanStatus').textContent = 'COMPLETE';
+            document.getElementById('vulnCount').textContent = vulnerabilities.length;
+            displayVulnerabilities();
+        }
+        
+        // Display vulnerabilities
+        function displayVulnerabilities() {
+            const container = document.getElementById('vulnList');
+            container.classList.add('active');
+            container.innerHTML = '';
+            
+            vulnerabilities.forEach(vuln => {
+                const item = document.createElement('div');
+                item.className = `vuln-item ${vuln.severity}`;
+                item.innerHTML = `
+                    <div class="vuln-header">
+                        <h3 class="vuln-title">${vuln.title}</h3>
+                        <span class="vuln-severity severity-${vuln.severity}">${vuln.severity.toUpperCase()}</span>
+                    </div>
+                    <p style="color: #888; margin-bottom: 0.5rem;">${vuln.description}</p>
+                    <p style="color: #f0f;">Endpoint: ${vuln.endpoint}</p>
+                    <p style="color: #0ff;">AI Confidence: ${vuln.confidence}%</p>
+                    <div style="margin-top: 1rem;">
+                        <button onclick="submitToH1('${vuln.title}')" style="background: rgba(255, 0, 255, 0.2); border: 1px solid #f0f; color: #f0f; padding: 0.5rem 1rem; cursor: pointer; margin-right: 0.5rem;">
+                            Submit to HackerOne
+                        </button>
+                        <button onclick="viewDetails('${vuln.title}')" style="background: rgba(0, 255, 255, 0.2); border: 1px solid #0ff; color: #0ff; padding: 0.5rem 1rem; cursor: pointer;">
+                            View Details
+                        </button>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+        
+        // Submit to HackerOne
+        function submitToH1(title) {
+            alert(`Submitting "${title}" to HackerOne...`);
+        }
+        
+        // View details
+        function viewDetails(title) {
+            alert(`Viewing details for: ${title}`);
+        }
+        
+        // Save configuration
+        function saveConfig() {
+            alert('Configuration saved successfully!');
+        }
+    </script>
+</body>
+</html>

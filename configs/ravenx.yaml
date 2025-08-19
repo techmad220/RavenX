@@ -1,0 +1,74 @@
+
+llm:
+  ollama_host: "http://localhost:11434"
+  max_tokens: 2000
+
+openai:
+  enable: false
+  base_url: "http://localhost:8000/v1"
+  model: "glm-4.5"
+
+param_miner:
+  enable: true
+  max_params_per_host: 40
+  wordlist: ["q","id","page","lang","redirect","url","return","next"]
+
+h1:
+  enable: false
+  username: ""
+  token: ""
+  program_handle: ""
+  auto_scope: true
+  submit: false
+  dry_run: true
+  min_severity: "medium"
+
+
+# crawl bounds
+per_host_rate: 2.0
+max_pages_per_host: 150
+time_budget_sec: 600
+
+
+# extended param miner wordlist file
+param_miner_wordlist_file: "configs/param_words.txt"
+
+
+llm_panel:
+  enable: false
+  agree: 2
+  models:
+    - {provider: "ollama", model: "llama3.1:8b"}
+    - {provider: "ollama", model: "qwen2.5:14b"}
+    - {provider: "openai", base_url: "http://localhost:8000/v1", model: "glm-4.5"}
+panel_propose: false
+
+
+# Use env BOSS20B_MODEL to set your preferred 20B-class model (GGUF/quant OK)
+# Example: export BOSS20B_MODEL="deepseek-coder-v2:16b" or "mixtral:8x7b"
+llm_panel:
+  enable: true
+  agree: 2
+  models:
+    - {alias: "boss20b", provider: "ollama"}         # will resolve via $BOSS20B_MODEL or default to qwen2.5:14b
+    - {provider: "ollama", model: "llama3.1:8b"}
+    - {provider: "ollama", model: "mistral:7b-instruct"}
+    - {provider: "openai", base_url: "http://localhost:8000/v1", model: "glm-4.5"}
+panel_propose: true
+
+
+# Panel with OSS-20B + dual coders (generalist roles)
+llm_panel:
+  enable: true
+  agree: 2
+  mode: sequential
+  models:
+    - {alias: "oss20b", provider: "ollama"}                 # resolved via $OSS20B_MODEL, defaults to qwen2.5:14b
+    - {provider: "ollama", model: "mixtral:8x7b"}
+    - {provider: "ollama", model: "deepseek-r1:7b"}
+    - {provider: "ollama", model: "llama3.1:8b"}
+    - {provider: "ollama", model: "mistral:7b-instruct"}
+    - {provider: "ollama", model: "codellama:13b-instruct"} # coder 1
+    - {provider: "ollama", model: "mistral-coder:7b"}       # coder 2
+    - {provider: "openai", base_url: "http://localhost:8000/v1", model: "glm-4.5"}
+panel_propose: true

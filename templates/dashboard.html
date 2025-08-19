@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RavenX Security Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        header {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .subtitle {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tab:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        
+        .tab.active {
+            background: rgba(255,255,255,0.35);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .badge {
+            background: #ff4757;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+            font-weight: bold;
+        }
+        
+        .content-area {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem;
+            min-height: 400px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        .finding-card {
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+        
+        .finding-card:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateX(5px);
+        }
+        
+        .finding-card.critical {
+            border-left-color: #ff4757;
+        }
+        
+        .finding-card.high {
+            border-left-color: #ff6348;
+        }
+        
+        .finding-card.medium {
+            border-left-color: #ffa502;
+        }
+        
+        .finding-card.low {
+            border-left-color: #26de81;
+        }
+        
+        .finding-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .finding-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .finding-severity {
+            padding: 0.3rem 0.8rem;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .severity-critical {
+            background: #ff4757;
+        }
+        
+        .severity-high {
+            background: #ff6348;
+        }
+        
+        .severity-medium {
+            background: #ffa502;
+        }
+        
+        .severity-low {
+            background: #26de81;
+        }
+        
+        .finding-details {
+            opacity: 0.9;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        .finding-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        
+        .btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        
+        .btn-approve {
+            background: #26de81;
+            border-color: #26de81;
+        }
+        
+        .btn-reject {
+            background: #ff4757;
+            border-color: #ff4757;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            opacity: 0.7;
+        }
+        
+        .search-bar {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            width: 100%;
+            margin-bottom: 1.5rem;
+        }
+        
+        .search-bar::placeholder {
+            color: rgba(255,255,255,0.6);
+        }
+        
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        
+        .filter-btn.active {
+            background: rgba(255,255,255,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>
+                <span>🦅</span>
+                RavenX Security Dashboard
+            </h1>
+            <p class="subtitle">AI-Powered Vulnerability Triage & Reporting System</p>
+        </header>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="totalFindings">0</div>
+                <div class="stat-label">Total Findings</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="pendingCount">0</div>
+                <div class="stat-label">Pending Review</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="approvedCount">0</div>
+                <div class="stat-label">Approved</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="rejectedCount">0</div>
+                <div class="stat-label">Rejected</div>
+            </div>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('pending')">
+                Pending Review
+                <span class="badge" id="pendingBadge">0</span>
+            </button>
+            <button class="tab" onclick="switchTab('approved')">
+                Approved
+                <span class="badge" id="approvedBadge" style="background: #26de81">0</span>
+            </button>
+            <button class="tab" onclick="switchTab('rejected')">
+                Rejected
+                <span class="badge" id="rejectedBadge" style="background: #636e72">0</span>
+            </button>
+            <button class="tab" onclick="switchTab('scan')">
+                New Scan
+            </button>
+        </div>
+        
+        <input type="text" class="search-bar" placeholder="Search findings..." id="searchInput" onkeyup="searchFindings()">
+        
+        <div class="filters">
+            <button class="filter-btn active" onclick="filterBySeverity('all')">All Severities</button>
+            <button class="filter-btn" onclick="filterBySeverity('critical')">Critical</button>
+            <button class="filter-btn" onclick="filterBySeverity('high')">High</button>
+            <button class="filter-btn" onclick="filterBySeverity('medium')">Medium</button>
+            <button class="filter-btn" onclick="filterBySeverity('low')">Low</button>
+        </div>
+        
+        <div class="content-area" id="contentArea">
+            <div class="loading">Loading findings...</div>
+        </div>
+    </div>
+    
+    <script>
+        let currentTab = 'pending';
+        let findings = {
+            pending: [],
+            approved: [],
+            rejected: []
+        };
+        
+        async function loadFindings() {
+            try {
+                // Load all findings
+                const [pendingRes, approvedRes, rejectedRes] = await Promise.all([
+                    fetch('/pending'),
+                    fetch('/approved'),
+                    fetch('/rejected')
+                ]);
+                
+                findings.pending = await pendingRes.json();
+                findings.approved = await approvedRes.json();
+                findings.rejected = await rejectedRes.json();
+                
+                updateStats();
+                displayFindings(currentTab);
+            } catch (error) {
+                console.error('Error loading findings:', error);
+                // Load sample data for demo
+                loadSampleData();
+            }
+        }
+        
+        function loadSampleData() {
+            findings = {
+                pending: [
+                    {
+                        id: 1,
+                        title: "SQL Injection in User Input",
+                        severity: "critical",
+                        description: "Unvalidated user input is directly concatenated into SQL queries, allowing attackers to execute arbitrary SQL commands.",
+                        target: "https://example.com/api/users",
+                        confidence: 0.95
+                    },
+                    {
+                        id: 2,
+                        title: "Cross-Site Scripting (XSS)",
+                        severity: "high",
+                        description: "User-supplied data is reflected in the response without proper encoding, enabling script injection.",
+                        target: "https://example.com/search",
+                        confidence: 0.88
+                    },
+                    {
+                        id: 3,
+                        title: "Exposed API Keys in JavaScript",
+                        severity: "high",
+                        description: "Sensitive API keys are exposed in client-side JavaScript code.",
+                        target: "https://example.com/app.js",
+                        confidence: 0.92
+                    }
+                ],
+                approved: [
+                    {
+                        id: 4,
+                        title: "Insecure Direct Object Reference",
+                        severity: "medium",
+                        description: "User IDs are predictable and can be enumerated to access other users' data.",
+                        target: "https://example.com/profile",
+                        confidence: 0.75
+                    }
+                ],
+                rejected: [
+                    {
+                        id: 5,
+                        title: "Missing Security Headers",
+                        severity: "low",
+                        description: "Some security headers are not configured optimally.",
+                        target: "https://example.com",
+                        confidence: 0.60
+                    }
+                ]
+            };
+            
+            updateStats();
+            displayFindings(currentTab);
+        }
+        
+        function updateStats() {
+            document.getElementById('totalFindings').textContent = 
+                findings.pending.length + findings.approved.length + findings.rejected.length;
+            document.getElementById('pendingCount').textContent = findings.pending.length;
+            document.getElementById('approvedCount').textContent = findings.approved.length;
+            document.getElementById('rejectedCount').textContent = findings.rejected.length;
+            
+            document.getElementById('pendingBadge').textContent = findings.pending.length;
+            document.getElementById('approvedBadge').textContent = findings.approved.length;
+            document.getElementById('rejectedBadge').textContent = findings.rejected.length;
+        }
+        
+        function displayFindings(tab) {
+            const contentArea = document.getElementById('contentArea');
+            const findingsList = findings[tab];
+            
+            if (findingsList.length === 0) {
+                contentArea.innerHTML = '<div class="empty-state">No findings in this category</div>';
+                return;
+            }
+            
+            contentArea.innerHTML = findingsList.map(finding => `
+                <div class="finding-card ${finding.severity}" data-severity="${finding.severity}">
+                    <div class="finding-header">
+                        <div class="finding-title">${finding.title}</div>
+                        <span class="finding-severity severity-${finding.severity}">${finding.severity}</span>
+                    </div>
+                    <div class="finding-details">
+                        <p>${finding.description}</p>
+                        <p><strong>Target:</strong> ${finding.target}</p>
+                        <p><strong>Confidence:</strong> ${(finding.confidence * 100).toFixed(0)}%</p>
+                    </div>
+                    <div class="finding-actions">
+                        ${tab === 'pending' ? `
+                            <button class="btn btn-approve" onclick="approveFinding(${finding.id})">Approve</button>
+                            <button class="btn btn-reject" onclick="rejectFinding(${finding.id})">Reject</button>
+                        ` : ''}
+                        <button class="btn" onclick="viewDetails(${finding.id})">View Details</button>
+                        <button class="btn" onclick="exportFinding(${finding.id})">Export</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function switchTab(tab) {
+            currentTab = tab;
+            
+            // Update active tab
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (tab === 'scan') {
+                showScanForm();
+            } else {
+                displayFindings(tab);
+            }
+        }
+        
+        function showScanForm() {
+            document.getElementById('contentArea').innerHTML = `
+                <div style="max-width: 600px; margin: 0 auto;">
+                    <h2 style="margin-bottom: 1.5rem;">Start New Security Scan</h2>
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem;">Target URL</label>
+                        <input type="text" class="search-bar" placeholder="https://example.com" id="targetUrl">
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem;">Scan Type</label>
+                        <select class="search-bar" id="scanType">
+                            <option value="full">Full Scan</option>
+                            <option value="quick">Quick Scan</option>
+                            <option value="api">API Only</option>
+                            <option value="frontend">Frontend Only</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem;">
+                            <input type="checkbox" id="enableAI" checked> Enable AI Triage
+                        </label>
+                        <label style="display: block; margin-bottom: 0.5rem;">
+                            <input type="checkbox" id="enableParams" checked> Enable Parameter Mining
+                        </label>
+                    </div>
+                    <button class="btn" style="background: #26de81; padding: 1rem 2rem; font-size: 1.1rem;" onclick="startScan()">
+                        Start Scan
+                    </button>
+                </div>
+            `;
+        }
+        
+        function searchFindings() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.querySelectorAll('.finding-card');
+            
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                card.style.display = text.includes(searchTerm) ? 'block' : 'none';
+            });
+        }
+        
+        function filterBySeverity(severity) {
+            // Update active filter
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const cards = document.querySelectorAll('.finding-card');
+            cards.forEach(card => {
+                if (severity === 'all') {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = card.dataset.severity === severity ? 'block' : 'none';
+                }
+            });
+        }
+        
+        function approveFinding(id) {
+            // Move finding from pending to approved
+            const finding = findings.pending.find(f => f.id === id);
+            if (finding) {
+                findings.pending = findings.pending.filter(f => f.id !== id);
+                findings.approved.push(finding);
+                updateStats();
+                displayFindings(currentTab);
+            }
+        }
+        
+        function rejectFinding(id) {
+            // Move finding from pending to rejected
+            const finding = findings.pending.find(f => f.id === id);
+            if (finding) {
+                findings.pending = findings.pending.filter(f => f.id !== id);
+                findings.rejected.push(finding);
+                updateStats();
+                displayFindings(currentTab);
+            }
+        }
+        
+        function viewDetails(id) {
+            alert('Opening detailed view for finding #' + id);
+        }
+        
+        function exportFinding(id) {
+            alert('Exporting finding #' + id);
+        }
+        
+        function startScan() {
+            const url = document.getElementById('targetUrl').value;
+            const scanType = document.getElementById('scanType').value;
+            const enableAI = document.getElementById('enableAI').checked;
+            const enableParams = document.getElementById('enableParams').checked;
+            
+            if (!url) {
+                alert('Please enter a target URL');
+                return;
+            }
+            
+            alert(`Starting ${scanType} scan on ${url}\nAI Triage: ${enableAI}\nParameter Mining: ${enableParams}`);
+        }
+        
+        // Initialize on load
+        window.onload = () => {
+            loadFindings();
+        };
+    </script>
+</body>
+</html>

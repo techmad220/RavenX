@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RavenX CYBER // Vulnerability Hunter</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;700&family=Audiowide&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: #000;
+            color: #00ffcc;
+            overflow: hidden;
+            position: relative;
+            height: 100vh;
+        }
+        
+        /* Animated cyber rain */
+        .cyber-rain {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -3;
+        }
+        
+        .rain-drop {
+            position: absolute;
+            font-family: monospace;
+            color: #00ff00;
+            text-shadow: 0 0 5px #00ff00;
+            animation: rain-fall linear infinite;
+            opacity: 0;
+        }
+        
+        @keyframes rain-fall {
+            0% {
+                transform: translateY(-100vh);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+        
+        /* Neon grid */
+        .neon-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(cyan 2px, transparent 2px),
+                linear-gradient(90deg, cyan 2px, transparent 2px),
+                linear-gradient(rgba(255, 0, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 0, 255, 0.1) 1px, transparent 1px);
+            background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+            background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px;
+            z-index: -2;
+            animation: grid-move 20s linear infinite;
+        }
+        
+        @keyframes grid-move {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(100px, 100px); }
+        }
+        
+        /* Glitch overlay */
+        .glitch-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(255, 0, 255, 0.03) 2px,
+                rgba(255, 0, 255, 0.03) 4px
+            );
+            z-index: -1;
+            pointer-events: none;
+            animation: glitch-anim 2s steps(1) infinite;
+        }
+        
+        @keyframes glitch-anim {
+            0%, 100% { opacity: 1; }
+            92% { opacity: 0; }
+            94% { opacity: 1; }
+            96% { opacity: 0; }
+            98% { opacity: 1; }
+        }
+        
+        /* Header */
+        .cyber-header {
+            background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(255,0,255,0.1) 100%);
+            border-bottom: 3px solid #ff00ff;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(255, 0, 255, 0.8);
+        }
+        
+        .cyber-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(0, 255, 255, 0.4), 
+                transparent,
+                rgba(255, 0, 255, 0.4),
+                transparent
+            );
+            animation: header-scan 3s linear infinite;
+        }
+        
+        @keyframes header-scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .cyber-logo {
+            font-family: 'Audiowide', cursive;
+            font-size: 3rem;
+            color: #ff00ff;
+            text-shadow: 
+                0 0 10px #ff00ff,
+                0 0 20px #ff00ff,
+                0 0 30px #ff00ff,
+                0 0 40px #00ffff,
+                0 0 50px #00ffff;
+            animation: neon-pulse 2s ease-in-out infinite;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        @keyframes neon-pulse {
+            0%, 100% {
+                text-shadow: 
+                    0 0 10px #ff00ff,
+                    0 0 20px #ff00ff,
+                    0 0 30px #ff00ff,
+                    0 0 40px #00ffff,
+                    0 0 50px #00ffff;
+            }
+            50% {
+                text-shadow: 
+                    0 0 20px #ff00ff,
+                    0 0 30px #ff00ff,
+                    0 0 40px #ff00ff,
+                    0 0 50px #00ffff,
+                    0 0 60px #00ffff;
+            }
+        }
+        
+        .cyber-status {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .status-item {
+            text-align: center;
+            border: 1px solid #00ffcc;
+            padding: 0.5rem 1rem;
+            background: rgba(0, 255, 204, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .status-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 204, 0.5), transparent);
+            animation: status-scan 2s linear infinite;
+        }
+        
+        @keyframes status-scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .status-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #00ff00;
+            text-shadow: 0 0 10px #00ff00;
+        }
+        
+        /* Navigation */
+        .cyber-nav {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 0;
+            border-bottom: 2px solid #00ffcc;
+            display: flex;
+            position: relative;
+        }
+        
+        .nav-tab {
+            flex: 1;
+            padding: 1rem;
+            background: linear-gradient(135deg, transparent, rgba(0, 255, 204, 0.1));
+            border: none;
+            border-right: 1px solid rgba(0, 255, 204, 0.3);
+            color: #00ffcc;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .nav-tab::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #ff00ff, #00ffff);
+            transition: width 0.3s;
+        }
+        
+        .nav-tab:hover::before,
+        .nav-tab.active::before {
+            width: 100%;
+        }
+        
+        .nav-tab.active {
+            background: linear-gradient(135deg, rgba(255, 0, 255, 0.2), rgba(0, 255, 204, 0.2));
+            color: #ff00ff;
+            text-shadow: 0 0 10px #ff00ff;
+        }
+        
+        /* Main content */
+        .cyber-container {
+            height: calc(100vh - 200px);
+            overflow-y: auto;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.7);
+        }
+        
+        /* Scan interface */
+        .scan-panel {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(255, 0, 255, 0.1));
+            border: 2px solid #ff00ff;
+            border-radius: 0;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .scan-panel::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ff00ff, #00ffff, #ff00ff);
+            z-index: -1;
+            animation: border-glow 3s linear infinite;
+            background-size: 400% 400%;
+        }
+        
+        @keyframes border-glow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .cyber-input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00ffcc;
+            color: #00ffcc;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .cyber-input:focus {
+            outline: none;
+            border-color: #ff00ff;
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
+            background: rgba(255, 0, 255, 0.1);
+        }
+        
+        .cyber-btn {
+            padding: 1rem 3rem;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            border: none;
+            color: #000;
+            font-family: 'Audiowide', cursive;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .cyber-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .cyber-btn:hover::before {
+            width: 400px;
+            height: 400px;
+        }
+        
+        .cyber-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 0, 255, 0.8);
+        }
+        
+        /* Terminal */
+        .cyber-terminal {
+            background: #000;
+            border: 2px solid #00ff00;
+            padding: 1rem;
+            font-family: monospace;
+            color: #00ff00;
+            height: 400px;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .cyber-terminal::before {
+            content: 'TERMINAL v2.077';
+            position: absolute;
+            top: -20px;
+            left: 10px;
+            background: #000;
+            padding: 0 10px;
+            color: #00ff00;
+            font-size: 0.8rem;
+        }
+        
+        .terminal-line {
+            margin: 0.5rem 0;
+            opacity: 0;
+            animation: type-in 0.5s forwards;
+        }
+        
+        @keyframes type-in {
+            to { opacity: 1; }
+        }
+        
+        .terminal-cursor {
+            display: inline-block;
+            width: 10px;
+            height: 20px;
+            background: #00ff00;
+            animation: cursor-blink 1s step-end infinite;
+        }
+        
+        @keyframes cursor-blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        
+        /* Vulnerability cards */
+        .vuln-card {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(255, 0, 0, 0.1));
+            border: 1px solid #ff0000;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .vuln-card::after {
+            content: 'THREAT DETECTED';
+            position: absolute;
+            top: 10px;
+            right: -80px;
+            background: #ff0000;
+            color: #fff;
+            padding: 5px 100px;
+            transform: rotate(45deg);
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .vuln-card:hover {
+            transform: translateX(10px);
+            border-color: #ff00ff;
+            box-shadow: -10px 0 30px rgba(255, 0, 255, 0.5);
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #000;
+            border: 1px solid #00ffcc;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #ff00ff, #00ffcc);
+            border: 1px solid #00ffcc;
+        }
+    </style>
+</head>
+<body>
+    <div class="cyber-rain" id="cyberRain"></div>
+    <div class="neon-grid"></div>
+    <div class="glitch-overlay"></div>
+    
+    <header class="cyber-header">
+        <div class="logo-container">
+            <h1 class="cyber-logo">
+                <span style="color: #00ffcc;">🦅</span>
+                RAVENX // CYBER
+            </h1>
+            <div class="cyber-status">
+                <div class="status-item">
+                    <div class="status-value">ARMED</div>
+                    <div style="font-size: 0.8rem;">STATUS</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-value" id="threatLevel">HIGH</div>
+                    <div style="font-size: 0.8rem;">THREAT</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-value" id="scanCount">0</div>
+                    <div style="font-size: 0.8rem;">SCANS</div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <nav class="cyber-nav">
+        <button class="nav-tab active" onclick="switchTab('hunt')">HUNT</button>
+        <button class="nav-tab" onclick="switchTab('scan')">SCAN</button>
+        <button class="nav-tab" onclick="switchTab('exploit')">EXPLOIT</button>
+        <button class="nav-tab" onclick="switchTab('report')">REPORT</button>
+        <button class="nav-tab" onclick="switchTab('arsenal')">ARSENAL</button>
+    </nav>
+    
+    <div class="cyber-container">
+        <!-- Hunt View -->
+        <div id="hunt-view" class="tab-content">
+            <div class="scan-panel">
+                <h2 style="color: #ff00ff; margin-bottom: 1rem; font-family: 'Audiowide', cursive;">
+                    TARGET ACQUISITION
+                </h2>
+                
+                <input type="text" class="cyber-input" id="targetUrl" placeholder="https://target.system">
+                
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 1rem 0;">
+                    <label style="display: flex; align-items: center; gap: 0.5rem;">
+                        <input type="checkbox" checked> SUBDOMAIN ENUM
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem;">
+                        <input type="checkbox" checked> PARAM MINING
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem;">
+                        <input type="checkbox" checked> AI TRIAGE
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem;">
+                        <input type="checkbox"> STEALTH MODE
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem;">
+                        <input type="checkbox"> DEEP CRAWL
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem;">
+                        <input type="checkbox"> H1 SUBMIT
+                    </label>
+                </div>
+                
+                <button class="cyber-btn" onclick="initiateScan()">
+                    [ INITIATE HUNT ]
+                </button>
+            </div>
+            
+            <div class="cyber-terminal" id="terminal">
+                <div class="terminal-line">RavenX Cyber v2.077 initialized...</div>
+                <div class="terminal-line">Quantum encryption: ENABLED</div>
+                <div class="terminal-line">Neural network: ONLINE</div>
+                <div class="terminal-line">Ready for target acquisition<span class="terminal-cursor"></span></div>
+            </div>
+        </div>
+        
+        <!-- Other views would go here -->
+    </div>
+    
+    <script>
+        // Create cyber rain effect
+        function createCyberRain() {
+            const container = document.getElementById('cyberRain');
+            const chars = '01アイウエオカキクケコサシスセソ';
+            
+            for (let i = 0; i < 100; i++) {
+                const drop = document.createElement('div');
+                drop.className = 'rain-drop';
+                drop.style.left = Math.random() * 100 + '%';
+                drop.style.animationDuration = (5 + Math.random() * 10) + 's';
+                drop.style.animationDelay = Math.random() * 5 + 's';
+                drop.style.fontSize = (10 + Math.random() * 10) + 'px';
+                drop.textContent = chars[Math.floor(Math.random() * chars.length)];
+                container.appendChild(drop);
+            }
+        }
+        
+        // Switch tabs
+        function switchTab(tab) {
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            console.log('Switching to:', tab);
+        }
+        
+        // Initiate scan
+        function initiateScan() {
+            const terminal = document.getElementById('terminal');
+            const messages = [
+                '> Resolving target DNS...',
+                '> Mapping attack surface...',
+                '> Fuzzing parameters...',
+                '> Testing injection points...',
+                '> AI analyzing patterns...',
+                '> Vulnerabilities detected!',
+                '> Generating proof of concept...'
+            ];
+            
+            messages.forEach((msg, index) => {
+                setTimeout(() => {
+                    const line = document.createElement('div');
+                    line.className = 'terminal-line';
+                    line.style.color = index === 5 ? '#ff0000' : '#00ff00';
+                    line.textContent = msg;
+                    terminal.appendChild(line);
+                    terminal.scrollTop = terminal.scrollHeight;
+                }, (index + 1) * 1000);
+            });
+            
+            // Update scan count
+            const count = document.getElementById('scanCount');
+            count.textContent = parseInt(count.textContent) + 1;
+        }
+        
+        // Initialize
+        createCyberRain();
+        
+        // Animated threat level
+        setInterval(() => {
+            const levels = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'];
+            const colors = ['#00ff00', '#ffff00', '#ff8800', '#ff0000'];
+            const index = Math.floor(Math.random() * levels.length);
+            const threat = document.getElementById('threatLevel');
+            threat.textContent = levels[index];
+            threat.style.color = colors[index];
+            threat.style.textShadow = `0 0 10px ${colors[index]}`;
+        }, 5000);
+    </script>
+</body>
+</html>

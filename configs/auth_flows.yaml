@@ -1,0 +1,9 @@
+
+flows:
+  - base: "https://example.com"
+    steps:
+      - {action: goto, url: "https://example.com/login"}
+      - {action: fill, selector: "#username", text: "demo"}
+      - {action: fill, selector: "#password", text: "demo"}
+      - {action: click, selector: "button[type=submit]"}
+      - {action: wait, ms: 1000}

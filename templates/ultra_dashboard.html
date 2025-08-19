@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RavenX Ultra - Next-Gen Security Intelligence</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Animated Cyber Grid Background */
+        .cyber-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: grid-move 10s linear infinite;
+            z-index: -2;
+        }
+        
+        @keyframes grid-move {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+        
+        /* Particle Effects */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #00ffff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #00ffff;
+            animation: float 20s infinite linear;
+        }
+        
+        @keyframes float {
+            from {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            to {
+                transform: translateY(-100vh) translateX(100px);
+                opacity: 0;
+            }
+        }
+        
+        /* Header with Holographic Effect */
+        .header {
+            background: linear-gradient(135deg, #000428 0%, #004e92 100%);
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 2px solid #00ffff;
+            box-shadow: 0 0 50px rgba(0, 255, 255, 0.5);
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(
+                from 0deg at 50% 50%,
+                transparent 0deg,
+                rgba(0, 255, 255, 0.1) 90deg,
+                transparent 180deg,
+                rgba(255, 0, 255, 0.1) 270deg,
+                transparent 360deg
+            );
+            animation: rotate 10s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .logo-container {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .logo {
+            font-family: 'Orbitron', monospace;
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, #00ffff, #ff00ff, #00ffff);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient-shift 3s ease infinite;
+            text-shadow: 0 0 30px rgba(0, 255, 255, 0.8);
+        }
+        
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .subtitle {
+            font-family: 'Orbitron', monospace;
+            color: #00ffff;
+            margin-top: 0.5rem;
+            font-size: 1rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+        
+        /* 3D Navigation Tabs */
+        .nav-container {
+            display: flex;
+            justify-content: center;
+            padding: 2rem;
+            perspective: 1000px;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 1rem;
+            transform-style: preserve-3d;
+        }
+        
+        .nav-tab {
+            position: relative;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.1), rgba(255, 0, 255, 0.1));
+            border: 2px solid transparent;
+            border-image: linear-gradient(45deg, #00ffff, #ff00ff) 1;
+            color: #fff;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            transform: translateZ(0);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            overflow: hidden;
+        }
+        
+        .nav-tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.4), transparent);
+            transition: left 0.5s;
+        }
+        
+        .nav-tab:hover::before {
+            left: 100%;
+        }
+        
+        .nav-tab:hover {
+            transform: translateZ(20px) rotateX(-10deg);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.5);
+        }
+        
+        .nav-tab.active {
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.3), rgba(255, 0, 255, 0.3));
+            box-shadow: 
+                0 0 30px rgba(0, 255, 255, 0.8),
+                inset 0 0 20px rgba(255, 255, 255, 0.1);
+            transform: translateZ(30px);
+        }
+        
+        /* Holographic Cards */
+        .container {
+            padding: 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .holo-card {
+            background: linear-gradient(135deg, rgba(0, 20, 40, 0.9), rgba(0, 40, 80, 0.9));
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+        
+        .holo-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #00ffff, #ff00ff, #00ffff, #00ff00);
+            border-radius: 20px;
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.3s;
+            animation: holo-border 3s linear infinite;
+            background-size: 400% 400%;
+        }
+        
+        @keyframes holo-border {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .holo-card:hover::before {
+            opacity: 1;
+        }
+        
+        .holo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 255, 255, 0.4);
+        }
+        
+        /* Threat Level Indicators with Pulse */
+        .threat-indicator {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            font-weight: bold;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .threat-critical {
+            background: linear-gradient(45deg, #ff0040, #ff0080);
+            box-shadow: 0 0 30px rgba(255, 0, 64, 0.8);
+            animation: critical-pulse 1s infinite;
+        }
+        
+        @keyframes critical-pulse {
+            0%, 100% { 
+                box-shadow: 0 0 30px rgba(255, 0, 64, 0.8);
+                transform: scale(1);
+            }
+            50% { 
+                box-shadow: 0 0 50px rgba(255, 0, 64, 1);
+                transform: scale(1.05);
+            }
+        }
+        
+        .threat-high {
+            background: linear-gradient(45deg, #ff8000, #ffb000);
+            box-shadow: 0 0 20px rgba(255, 128, 0, 0.6);
+        }
+        
+        .threat-medium {
+            background: linear-gradient(45deg, #ffff00, #ffff80);
+            color: #000;
+            box-shadow: 0 0 20px rgba(255, 255, 0, 0.6);
+        }
+        
+        .threat-low {
+            background: linear-gradient(45deg, #00ff00, #00ff80);
+            color: #000;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.6);
+        }
+        
+        /* Data Visualization */
+        .data-viz {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .viz-card {
+            background: rgba(0, 20, 40, 0.8);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .viz-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00ffff, transparent);
+            animation: scan 2s linear infinite;
+        }
+        
+        @keyframes scan {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(100%); }
+        }
+        
+        .viz-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.2rem;
+            color: #00ffff;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .viz-value {
+            font-family: 'Orbitron', monospace;
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, #00ffff, #ff00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+        
+        /* Cyber Terminal */
+        .terminal {
+            background: #000;
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            color: #00ff00;
+            max-height: 400px;
+            overflow-y: auto;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+        }
+        
+        .terminal-line {
+            margin: 0.5rem 0;
+            opacity: 0;
+            animation: type-in 0.5s forwards;
+        }
+        
+        @keyframes type-in {
+            to { opacity: 1; }
+        }
+        
+        .terminal-prompt {
+            color: #00ffff;
+        }
+        
+        /* Glitch Effect */
+        .glitch {
+            position: relative;
+            color: #fff;
+            font-size: 2rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-shadow: 
+                0.05em 0 0 rgba(255, 0, 0, 0.75),
+                -0.025em -0.05em 0 rgba(0, 255, 0, 0.75),
+                0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
+            animation: glitch 500ms infinite;
+        }
+        
+        @keyframes glitch {
+            0% {
+                text-shadow: 
+                    0.05em 0 0 rgba(255, 0, 0, 0.75),
+                    -0.05em -0.025em 0 rgba(0, 255, 0, 0.75),
+                    0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
+            }
+            14% {
+                text-shadow: 
+                    0.05em 0 0 rgba(255, 0, 0, 0.75),
+                    -0.05em -0.025em 0 rgba(0, 255, 0, 0.75),
+                    0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
+            }
+            15% {
+                text-shadow: 
+                    -0.05em -0.025em 0 rgba(255, 0, 0, 0.75),
+                    0.025em 0.025em 0 rgba(0, 255, 0, 0.75),
+                    -0.05em -0.05em 0 rgba(0, 0, 255, 0.75);
+            }
+            49% {
+                text-shadow: 
+                    -0.05em -0.025em 0 rgba(255, 0, 0, 0.75),
+                    0.025em 0.025em 0 rgba(0, 255, 0, 0.75),
+                    -0.05em -0.05em 0 rgba(0, 0, 255, 0.75);
+            }
+            50% {
+                text-shadow: 
+                    0.025em 0.05em 0 rgba(255, 0, 0, 0.75),
+                    0.05em 0 0 rgba(0, 255, 0, 0.75),
+                    0 -0.05em 0 rgba(0, 0, 255, 0.75);
+            }
+            99% {
+                text-shadow: 
+                    0.025em 0.05em 0 rgba(255, 0, 0, 0.75),
+                    0.05em 0 0 rgba(0, 255, 0, 0.75),
+                    0 -0.05em 0 rgba(0, 0, 255, 0.75);
+            }
+            100% {
+                text-shadow: 
+                    -0.025em 0 0 rgba(255, 0, 0, 0.75),
+                    -0.025em -0.025em 0 rgba(0, 255, 0, 0.75),
+                    -0.025em -0.05em 0 rgba(0, 0, 255, 0.75);
+            }
+        }
+        
+        /* Matrix Rain Effect */
+        .matrix-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.1;
+        }
+        
+        .matrix-column {
+            position: absolute;
+            top: -100%;
+            font-family: monospace;
+            font-size: 20px;
+            color: #00ff00;
+            animation: matrix-fall 10s linear infinite;
+        }
+        
+        @keyframes matrix-fall {
+            to { top: 100%; }
+        }
+        
+        /* Radar Scanner */
+        .radar {
+            width: 200px;
+            height: 200px;
+            border: 2px solid #00ff00;
+            border-radius: 50%;
+            position: relative;
+            background: radial-gradient(circle, rgba(0, 255, 0, 0.1), transparent);
+            overflow: hidden;
+        }
+        
+        .radar::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00ff00);
+            transform-origin: left center;
+            animation: radar-sweep 4s linear infinite;
+        }
+        
+        @keyframes radar-sweep {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .radar-dot {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #ff0000;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #ff0000;
+            animation: radar-ping 2s infinite;
+        }
+        
+        @keyframes radar-ping {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.5); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Cyber Grid Background -->
+    <div class="cyber-grid"></div>
+    
+    <!-- Particle Effects -->
+    <div class="particles" id="particles"></div>
+    
+    <!-- Matrix Rain -->
+    <div class="matrix-rain" id="matrixRain"></div>
+    
+    <!-- Header -->
+    <header class="header">
+        <div class="logo-container">
+            <div>
+                <h1 class="logo">🦅 RAVENX ULTRA</h1>
+                <p class="subtitle">Next-Generation Threat Intelligence Platform</p>
+            </div>
+            <div class="radar">
+                <div class="radar-dot" style="top: 30%; left: 60%;"></div>
+                <div class="radar-dot" style="top: 70%; left: 30%;"></div>
+                <div class="radar-dot" style="top: 50%; left: 80%;"></div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Navigation -->
+    <nav class="nav-container">
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchView('dashboard')">
+                <span class="glitch">Dashboard</span>
+            </button>
+            <button class="nav-tab" onclick="switchView('threats')">
+                <span class="glitch">Threats</span>
+            </button>
+            <button class="nav-tab" onclick="switchView('hunting')">
+                <span class="glitch">Hunt</span>
+            </button>
+            <button class="nav-tab" onclick="switchView('intelligence')">
+                <span class="glitch">Intel</span>
+            </button>
+            <button class="nav-tab" onclick="switchView('response')">
+                <span class="glitch">Response</span>
+            </button>
+        </div>
+    </nav>
+    
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Dashboard View -->
+        <div id="dashboard" class="view active">
+            <div class="data-viz">
+                <div class="viz-card">
+                    <h3 class="viz-title">Active Threats</h3>
+                    <div class="viz-value" id="activeThreats">247</div>
+                    <div class="threat-indicator threat-critical">CRITICAL</div>
+                </div>
+                
+                <div class="viz-card">
+                    <h3 class="viz-title">Vulnerabilities</h3>
+                    <div class="viz-value" id="vulnCount">1,337</div>
+                    <div class="threat-indicator threat-high">HIGH RISK</div>
+                </div>
+                
+                <div class="viz-card">
+                    <h3 class="viz-title">Blocked Attacks</h3>
+                    <div class="viz-value" id="blockedCount">98.7%</div>
+                    <div class="threat-indicator threat-low">PROTECTED</div>
+                </div>
+                
+                <div class="viz-card">
+                    <h3 class="viz-title">AI Confidence</h3>
+                    <div class="viz-value" id="aiConfidence">94.2%</div>
+                    <div class="threat-indicator threat-medium">ANALYZING</div>
+                </div>
+            </div>
+            
+            <!-- Cyber Terminal -->
+            <div class="holo-card">
+                <h2 class="viz-title">System Terminal</h2>
+                <div class="terminal" id="terminal">
+                    <div class="terminal-line">
+                        <span class="terminal-prompt">ravenx@ultra:~$</span> Initializing threat detection matrix...
+                    </div>
+                    <div class="terminal-line">
+                        <span class="terminal-prompt">ravenx@ultra:~$</span> Loading AI models... [████████████████] 100%
+                    </div>
+                    <div class="terminal-line">
+                        <span class="terminal-prompt">ravenx@ultra:~$</span> Quantum encryption: ACTIVE
+                    </div>
+                    <div class="terminal-line">
+                        <span class="terminal-prompt">ravenx@ultra:~$</span> Neural network: ONLINE
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Real-time Feed -->
+            <div class="holo-card">
+                <h2 class="viz-title">Live Threat Stream</h2>
+                <div id="threatFeed"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Initialize particle effects
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+                container.appendChild(particle);
+            }
+        }
+        
+        // Matrix rain effect
+        function createMatrixRain() {
+            const container = document.getElementById('matrixRain');
+            const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+            
+            for (let i = 0; i < 20; i++) {
+                const column = document.createElement('div');
+                column.className = 'matrix-column';
+                column.style.left = Math.random() * 100 + '%';
+                column.style.animationDelay = Math.random() * 10 + 's';
+                
+                let text = '';
+                for (let j = 0; j < 30; j++) {
+                    text += chars[Math.floor(Math.random() * chars.length)] + '<br>';
+                }
+                column.innerHTML = text;
+                
+                container.appendChild(column);
+            }
+        }
+        
+        // Animated counter
+        function animateValue(id, start, end, duration) {
+            const obj = document.getElementById(id);
+            const range = end - start;
+            const minTimer = 50;
+            let stepTime = Math.abs(Math.floor(duration / range));
+            stepTime = Math.max(stepTime, minTimer);
+            const startTime = new Date().getTime();
+            const endTime = startTime + duration;
+            
+            function run() {
+                const now = new Date().getTime();
+                const remaining = Math.max((endTime - now) / duration, 0);
+                const value = Math.round(end - (remaining * range));
+                
+                if (id === 'blockedCount' || id === 'aiConfidence') {
+                    obj.textContent = value + '%';
+                } else {
+                    obj.textContent = value.toLocaleString();
+                }
+                
+                if (value !== end) {
+                    requestAnimationFrame(run);
+                }
+            }
+            
+            requestAnimationFrame(run);
+        }
+        
+        // Terminal typing effect
+        function typeTerminalLine(text) {
+            const terminal = document.getElementById('terminal');
+            const line = document.createElement('div');
+            line.className = 'terminal-line';
+            line.innerHTML = `<span class="terminal-prompt">ravenx@ultra:~$</span> ${text}`;
+            terminal.appendChild(line);
+            terminal.scrollTop = terminal.scrollHeight;
+            
+            // Keep only last 10 lines
+            while (terminal.children.length > 10) {
+                terminal.removeChild(terminal.firstChild);
+            }
+        }
+        
+        // Simulate threat feed
+        function generateThreatFeed() {
+            const threats = [
+                { type: 'SQL Injection', ip: '192.168.1.100', severity: 'critical' },
+                { type: 'XSS Attack', ip: '10.0.0.50', severity: 'high' },
+                { type: 'DDoS Attempt', ip: '172.16.0.1', severity: 'medium' },
+                { type: 'Zero-Day Exploit', ip: '8.8.8.8', severity: 'critical' },
+                { type: 'Ransomware Deploy', ip: '1.2.3.4', severity: 'critical' }
+            ];
+            
+            const feed = document.getElementById('threatFeed');
+            const threat = threats[Math.floor(Math.random() * threats.length)];
+            
+            const item = document.createElement('div');
+            item.className = 'holo-card';
+            item.style.marginBottom = '1rem';
+            item.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong style="color: #00ffff;">${threat.type}</strong>
+                        <br>
+                        <span style="color: #888;">Source: ${threat.ip}</span>
+                    </div>
+                    <div class="threat-indicator threat-${threat.severity}">${threat.severity.toUpperCase()}</div>
+                </div>
+            `;
+            
+            feed.insertBefore(item, feed.firstChild);
+            
+            // Keep only last 5 items
+            while (feed.children.length > 5) {
+                feed.removeChild(feed.lastChild);
+            }
+        }
+        
+        // View switching
+        function switchView(viewName) {
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Add view switching logic here
+            console.log('Switching to:', viewName);
+        }
+        
+        // Initialize on load
+        window.addEventListener('load', () => {
+            createParticles();
+            createMatrixRain();
+            
+            // Animate counters
+            animateValue('activeThreats', 0, 247, 2000);
+            animateValue('vulnCount', 0, 1337, 2500);
+            animateValue('blockedCount', 0, 98.7, 2000);
+            animateValue('aiConfidence', 0, 94.2, 2200);
+            
+            // Simulate terminal activity
+            const terminalMessages = [
+                'Scanning network perimeter...',
+                'Analyzing traffic patterns...',
+                'Machine learning model updated',
+                'Threat signature database synchronized',
+                'Quantum firewall: ENGAGED',
+                'AI threat hunting: ACTIVE',
+                'Behavioral analysis complete',
+                'Zero trust verification: PASSED'
+            ];
+            
+            setInterval(() => {
+                const msg = terminalMessages[Math.floor(Math.random() * terminalMessages.length)];
+                typeTerminalLine(msg);
+            }, 3000);
+            
+            // Generate threat feed
+            setInterval(generateThreatFeed, 4000);
+            generateThreatFeed(); // Initial item
+        });
+    </script>
+</body>
+</html>
